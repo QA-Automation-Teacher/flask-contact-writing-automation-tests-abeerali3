@@ -1,4 +1,5 @@
-from flask import Flask, redirect, url_for, render_template, request, flash
+import json
+from flask import jsonify, Flask, redirect, url_for, render_template, request, flash
 from models import db, Contacts
 from forms import ContactForm
 
@@ -82,13 +83,24 @@ def edit_contact(id):
         my_contact=my_contact)
 
 
-@app.route("/contacts")
+
+
+@app.get("/api/contacts")
 def contacts():
     '''
     Show alls contacts
     '''
     contacts = Contacts.query.order_by(Contacts.name).all()
-    return render_template('web/contacts.html', contacts=contacts)
+    return jsonify([c.to_dict() for c in contacts])
+
+
+# @app.route("/contacts")
+# def contacts():
+#     '''
+#     Show alls contacts
+#     '''
+#     contacts = Contacts.query.order_by(Contacts.name).all()
+#     return render_template('web/contacts.html', contacts=contacts)
 
 
 @app.route("/search")
