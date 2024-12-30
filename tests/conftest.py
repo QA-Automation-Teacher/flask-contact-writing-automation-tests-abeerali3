@@ -20,3 +20,11 @@ def client():
             "TESTING": True
         })
         yield app.test_client()
+
+@pytest.fixture
+def contacts_num():
+    return 100
+
+@pytest.fixture
+def BASE_URL():
+    return "http://localhost:5000"

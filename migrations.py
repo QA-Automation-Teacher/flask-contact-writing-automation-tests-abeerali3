@@ -2,18 +2,21 @@ from models import db, Contacts
 from faker import Factory
 from app import app
 
-with app.app_context():
-    fake = Factory.create()
+
+def generate_fake_contacts(num = 100, locale = 'he_IL'):
+    '''
+    Generate fake contacts
+    @input num = Number of contacts
+    @input locale = Language default language is Hebrew (he_IL)
+    '''
+    # fake = Factory.create()
     # Spanish
     # fake = Factory.create('es_ES')
-    # fake = Factory.create('he_IL')
+    fake = Factory.create(locale)
     # fake = Factory.create('ar_PS')
-    fake = Factory.create('en_GB')
-    # Reload tables
-    db.drop_all()
-    db.create_all()
+    
     # Make 100 fake contacts
-    for num in range(100):
+    for num in range(num):
         fullname = fake.name().split()
         name = fullname[0]
         surname = ' '.join(fullname[1:])
@@ -23,3 +26,10 @@ with app.app_context():
         mi_contacto = Contacts(name, surname, email, phone)
         db.session.add(mi_contacto)
         db.session.commit()
+
+
+with app.app_context():
+    # Reload tables
+    db.drop_all()
+    db.create_all()
+    generate_fake_contacts()
