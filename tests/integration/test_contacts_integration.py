@@ -1,3 +1,4 @@
+import time
 import pytest
 from app import app
 from models import db, Contacts
@@ -40,6 +41,7 @@ def test_create_contact(client, BASE_URL):
     assert created_contact["name"] == new_contact["name"]
     assert created_contact["email"] == new_contact["email"]
     assert created_contact["phone"] == new_contact["phone"]
+ 
 
 
 def test_update_contact(client, BASE_URL):
@@ -62,40 +64,56 @@ def test_delete_contact(client, BASE_URL):
     assert response.status_code == 204
 
 
+def test_create_contact_response_time(client, BASE_URL):
+    new_contact = {
+        "name": "Speedy Gonzales",
+        "email": "speedy@example.com",
+        "phone": "987-654-3210"
+    }
+    start_time = time.time()
+    response = client.post(BASE_URL + "/api/contacts", json=new_contact)
+    end_time = time.time()
+    assert response.status_code == 201
+    assert end_time - start_time < 0.5  # Acceptable response time in seconds
 
 
-# def test_get_contacts(client):
-#     response = client.get("/api/contacts")
-#     assert response.status_code == 200
-#     assert isinstance(response.get_json(), list)
+def test_get_contactss(client):
+    response = client.get("/api/contacts")
+    assert response.status_code == 200
+    assert isinstance(response.get_json(), list)
     
-# def test_get_contacts_name(client):
-#     response = client.get("/api/contacts")
-#     assert response.status_code == 200
-#     data = response.get_json()
-#     for contact in data:
-#         assert 'name' in contact
+def test_get_contacts_name(client):
+    response = client.get("/api/contacts")
+    assert response.status_code == 200
+    data = response.get_json()
+    for contact in data:
+        assert 'name' in contact
       
-# def test_get_contacts_surname(client):
-#     response = client.get("/api/contacts")
-#     data = response.get_json()
-#     assert isinstance(data, list)
-#     for contact in data:
-#         assert 'surname' in contact
+def test_get_contacts_surname(client):
+    response = client.get("/api/contacts")
+    data = response.get_json()
+    assert isinstance(data, list)
+    for contact in data:
+        assert 'surname' in contact
         
-# def test_get_non_existing_endpoint(client):
-#     response = client.get("/api/non_existing_endpoint")
-#     assert response.status_code == 404
+def test_get_contacts_email(client):
+    response = client.get("/api/contacts")
+    assert response.status_code == 200
+    data = response.get_json()
+    for contact in data:
+        assert 'email' in contact
+
+def test_get_non_existing_endpoint(client):
+    response = client.get("/api/non_existing_endpoint")
+    assert response.status_code == 404
 
 
-# import time
-
-# def test_get_contacts_response_time(client):
-#     start_time = time.time()
-#     response = client.get("/api/contacts")
-#     end_time = time.time()
-#     assert response.status_code == 200
-#     assert end_time - start_time < 0.5  
+def test_get_contacts_response_time(client):
+    start_time = time.time()
+    response = client.get("/api/contacts")
+    end_time = time.time()
+    assert response.status_code == 200
+    assert end_time - start_time < 0.5  
     
 # def test_create_contact(client):
 #     new_contact = {
