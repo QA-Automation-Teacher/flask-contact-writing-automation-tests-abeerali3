@@ -1,5 +1,4 @@
 import time
-import pytest
 from app import app
 from models import db, Contacts
 from faker import Factory
