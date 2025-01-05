@@ -1,4 +1,8 @@
-Faker==0.7.11
-Flask==0.12.1
-Flask-SQLAlchemy==2.2
-Flask-WTF==0.14.2
+Faker==33.1.0
+Flask==3.1.0
+Flask-SQLAlchemy==3.1.1
+flask-wtf==1.2.1
+Jinja2==3.1.5
+pytest==8.3.4
+beautifulsoup4==4.12.3
+email_validator==2.2.0

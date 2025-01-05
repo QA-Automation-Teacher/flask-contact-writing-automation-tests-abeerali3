@@ -18,8 +18,8 @@ jobs:
       uses: classroom-resources/autograding-python-grader@v1
       with:
         timeout: 10
-        max-score: 10
-        setup-command: pip install flask pytest-flask
+        max-score: 34
+        setup-command: pip install -r requirements.txt && python3 migrations.py
     - name: Autograding Reporter
       uses: classroom-resources/autograding-grading-reporter@v1
       env:

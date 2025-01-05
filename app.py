@@ -1,6 +1,8 @@
-from flask import Flask, redirect, url_for, render_template, request, flash
+import json
+from flask import jsonify, Flask, redirect, url_for, render_template, request, flash
 from models import db, Contacts
 from forms import ContactForm
+from helpers.utils import contact_to_dict
 
 # Flask
 app = Flask(__name__)
@@ -81,7 +83,6 @@ def edit_contact(id):
         form=form,
         my_contact=my_contact)
 
-
 @app.route("/contacts")
 def contacts():
     '''
@@ -121,7 +122,44 @@ def contacts_delete(id):
 
     return redirect(url_for('contacts'))
 
+# RESTful API for contacts
+@app.route("/api/contacts", methods=['GET', 'POST'])
+def api_contacts():
+    if request.method == 'GET':
+        contacts = Contacts.query.order_by(Contacts.name).all()
+        return jsonify([contact.to_dict() for contact in contacts])
+    elif request.method == 'POST':
+        data = request.get_json()
+        new_contact = Contacts(
+            name=data['name'],
+            surname=data.get('surname', ''),
+            email=data['email'],
+            phone=data['phone']
+        )
+        db.session.add(new_contact)
+        db.session.commit()
+        return jsonify(new_contact.to_dict()), 201
+
+
+@app.route("/api/contacts/<int:id>", methods=['GET', 'PUT', 'DELETE'])
+def api_contact_detail(id):
+    contact = Contacts.query.get_or_404(id)
+    if request.method == 'GET':
+        return jsonify(contact.to_dict())
+    elif request.method == 'PUT':
+        data = request.get_json()
+        contact.name = data['name']
+        contact.surname = data['surname']
+        contact.email = data['email']
+        contact.phone = data['phone']
+        db.session.commit()
+        return jsonify(contact.to_dict())
+    elif request.method == 'DELETE':
+        db.session.delete(contact)
+        db.session.commit()
+        return '', 204
 
 if __name__ == "__main__":
     app.debug = True
     app.run()
+    
